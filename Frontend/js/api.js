@@ -1,5 +1,5 @@
 const SUPABASE_URL     = 'https://capldgdksjefougtspqr.supabase.co';
-const SUPABASE_ANON_KEY = 'Ssb_publishable_LGFW_ekgbywrYAi_gxvbaA_FMzxFy_Q';
+const SUPABASE_ANON_KEY = 'sb_publishable_LGFW_ekgbywrYAi_gxvbaA_FMzxFy_Q';
 const FUNCTIONS_URL    = `${SUPABASE_URL}/functions/v1`;
 
 // ── Helpers de sessão ─────────────────────────────────
