@@ -73,6 +73,19 @@ function getLast6Months() {
   return result;
 }
 
+// Logout
+window.fazerLogout = function() {
+  const keysToRemove = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && (key.includes('auth-token') || key.includes('supabase'))) {
+      keysToRemove.push(key);
+    }
+  }
+  keysToRemove.forEach(k => localStorage.removeItem(k));
+  window.location.href = 'login.html';
+};
+
 // ── Navegação ─────────────────────────────────────────────────────────────
 function showView(id, btn) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
