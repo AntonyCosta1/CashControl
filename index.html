@@ -33,6 +33,7 @@
       <button class="active" onclick="showView('dashboard', this)">Dashboard</button>
       <button onclick="showView('registrar', this)">Registrar</button>
       <button onclick="showView('relatorios', this)">Relatórios</button>
+      <button onclick="window.location.href='investimentos.html'">Investimentos</button>
     </nav>
   </header>
 
@@ -176,26 +177,6 @@
   </div><!-- /view-relatorios -->
 
 </div><!-- /app -->
-
-<!-- ── INVESTIMENTOS ── -->
-<div class="view-investimentos">
-  <div class="form-card">
-    <div class="form-title">Registrar <span>Investimento</span></div>
-    <div class="form-grid">
-      <div class="form-group full">
-        <label>Tipo de Investimento</label>
-        <select id="tipo-investimento">
-          <option value="">Selecione</option>
-          <option value="Ações">Ações</option>
-          <option value="Fundos Imobiliários">Fundos Imobiliários</option>
-          <option value="Tesouro Direto">Tesouro Direto</option>
-          <option value="Criptomoedas">Criptomoedas</option>
-          <option value="Outros">Outros</option>
-        </select>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- App -->
 <script src="js/app.js"></script>

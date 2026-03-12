@@ -1,0 +1,50 @@
+/* ── LAYOUT PRINCIPAL ── */
+.inv-main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 900px) {
+  .inv-main { grid-template-columns: 1fr; }
+}
+
+.inv-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── BADGES DE TIPO ── */
+.badge-acoes            { background: #5b8fff22; color: #5b8fff; }
+.badge-fundos           { background: #c77dff22; color: #c77dff; }
+.badge-tesouro          { background: #43e5b022; color: #43e5b0; }
+.badge-cripto           { background: #f9c74f22; color: #f9c74f; }
+.badge-rendafixa        { background: #ff9fdb22; color: #ff9fdb; }
+.badge-poupanca         { background: #80ffdb22; color: #80ffdb; }
+.badge-inv-outros       { background: #aaa2;     color: #aaa;    }
+
+/* ── RENTABILIDADE ── */
+.rent-pos {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  color: var(--accent3);
+}
+
+.rent-neg {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  color: var(--accent2);
+}
+
+.rent-zero {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+/* ── FORM CARD expandido na página de investimentos ── */
+.app .form-card {
+  max-width: 100%;
+}
