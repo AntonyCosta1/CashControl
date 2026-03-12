@@ -71,6 +71,12 @@ header {
   font-size: 20px;
 }
 
+.logo img {
+  height: 42px;
+  width: auto;
+  border-radius: 10px;
+}
+
 .logo h1 {
   font-family: 'Syne', sans-serif;
   font-size: 1.4rem;
@@ -266,6 +272,7 @@ tr:hover td { background: rgba(91,143,255,0.04); }
 .badge-lazer       { background: #f9c74f22; color: #f9c74f; }
 .badge-saude       { background: #ff6b6b22; color: #ff6b6b; }
 .badge-moradia     { background: #c77dff22; color: #c77dff; }
+.badge-casamento   { background: #ff9fdb22; color: #ff9fdb; }
 .badge-outros      { background: #aaa2;     color: #aaa;    }
 
 .delete-btn {
@@ -332,7 +339,7 @@ input, select, textarea {
 input:focus, select:focus, textarea:focus { border-color: var(--accent); }
 select option { background: var(--panel); }
 
-.btn-primary {
+.submit-btn {
   background: linear-gradient(135deg, var(--accent), #4070e0);
   border: none;
   border-radius: 10px;
@@ -344,12 +351,15 @@ select option { background: var(--panel); }
   cursor: pointer;
   transition: opacity .2s, transform .15s;
   margin-top: 8px;
+  width: 100%;
 }
 
-.btn-primary:hover  { opacity: .9; transform: translateY(-1px); }
-.btn-primary:active { transform: translateY(0); }
+.submit-btn:hover  { opacity: .9; transform: translateY(-1px); }
+.submit-btn:active { transform: translateY(0); }
 
-.success-toast {
+/* success-toast — mantém as duas grafias por compatibilidade */
+.success-toast,
+.sucess-toast {
   display: none;
   background: var(--accent3);
   color: #0c0f1a;
@@ -454,4 +464,17 @@ select option { background: var(--panel); }
 @media (max-width: 600px) {
   .table-header  { flex-direction: column; gap: 12px; }
   .search-box    { width: 100%; }
+}
+
+/* ── INVESTIMENTOS ── */
+.view-investimentos {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+
+.view-investimentos .form-card {
+  max-width: 500px;
 }
