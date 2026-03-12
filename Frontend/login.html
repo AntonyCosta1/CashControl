@@ -7,125 +7,30 @@
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="css/style.css"/>
   <style>
-    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-
-    .auth-wrap {
-      width: 100%;
-      max-width: 420px;
-      padding: 20px;
-    }
-
-    .auth-logo {
-      text-align: center;
-      margin-bottom: 36px;
-    }
-
-    .auth-logo h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: 2rem;
-      font-weight: 800;
-    }
-
-    .auth-logo span { color: var(--accent); }
-    .auth-logo p { color: var(--muted); font-size: .9rem; margin-top: 6px; }
-
-    .auth-card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 36px;
-    }
-
-    .auth-tabs {
-      display: flex;
-      gap: 4px;
-      background: var(--panel2);
-      border-radius: 10px;
-      padding: 4px;
-      margin-bottom: 28px;
-    }
-
-    .auth-tab {
-      flex: 1;
-      background: none;
-      border: none;
-      color: var(--muted);
-      font-family: 'Syne', sans-serif;
-      font-size: .85rem;
-      font-weight: 700;
-      padding: 9px;
-      border-radius: 7px;
-      cursor: pointer;
-      transition: all .2s;
-    }
-
-    .auth-tab.active { background: var(--accent); color: #fff; }
-
-    .auth-form { display: none; flex-direction: column; gap: 16px; }
-    .auth-form.active { display: flex; }
-
-    .auth-form label {
-      font-size: .75rem;
-      text-transform: uppercase;
-      letter-spacing: .07em;
-      color: var(--muted);
-      margin-bottom: 4px;
-      display: block;
-    }
-
-    .auth-form input {
-      width: 100%;
-      background: var(--panel2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 16px;
-      font-family: 'DM Sans', sans-serif;
-      color: var(--text);
-      font-size: .9rem;
-      outline: none;
-      transition: border .2s;
-    }
-
-    .auth-form input:focus { border-color: var(--accent); }
-
-    .auth-btn {
-      background: linear-gradient(135deg, var(--accent), #4070e0);
-      border: none;
-      border-radius: 10px;
-      color: #fff;
-      font-family: 'Syne', sans-serif;
-      font-size: .95rem;
-      font-weight: 700;
-      padding: 14px;
-      cursor: pointer;
-      transition: opacity .2s, transform .15s;
-      margin-top: 4px;
-    }
-
-    .auth-btn:hover  { opacity: .9; transform: translateY(-1px); }
-    .auth-btn:active { transform: translateY(0); }
-
-    .auth-error {
-      display: none;
-      background: #ff6b6b22;
-      border: 1px solid #ff6b6b44;
-      color: var(--accent2);
-      border-radius: 8px;
-      padding: 10px 14px;
-      font-size: .85rem;
-    }
-
-    .auth-hint {
-      text-align: center;
-      font-size: .8rem;
-      color: var(--muted);
-      margin-top: 20px;
-    }
+    body { display:flex; align-items:center; justify-content:center; min-height:100vh; }
+    .auth-wrap { width:100%; max-width:420px; padding:20px; }
+    .auth-logo { text-align:center; margin-bottom:36px; }
+    .auth-logo h1 { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; }
+    .auth-logo span { color:var(--accent); }
+    .auth-logo p { color:var(--muted); font-size:.9rem; margin-top:6px; }
+    .auth-card { background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:36px; }
+    .auth-tabs { display:flex; gap:4px; background:var(--panel2); border-radius:10px; padding:4px; margin-bottom:28px; }
+    .auth-tab { flex:1; background:none; border:none; color:var(--muted); font-family:'Syne',sans-serif; font-size:.85rem; font-weight:700; padding:9px; border-radius:7px; cursor:pointer; transition:all .2s; }
+    .auth-tab.active { background:var(--accent); color:#fff; }
+    .auth-form { display:none; flex-direction:column; gap:16px; }
+    .auth-form.active { display:flex; }
+    .auth-form label { font-size:.75rem; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin-bottom:4px; display:block; }
+    .auth-form input { width:100%; }
+    .auth-btn { background:linear-gradient(135deg,var(--accent),#4070e0); border:none; border-radius:10px; color:#fff; font-family:'Syne',sans-serif; font-size:.95rem; font-weight:700; padding:14px; cursor:pointer; transition:opacity .2s,transform .15s; margin-top:4px; width:100%; }
+    .auth-btn:hover { opacity:.9; transform:translateY(-1px); }
+    .auth-btn:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+    .auth-error { display:none; background:#ff6b6b22; border:1px solid #ff6b6b44; color:var(--accent2); border-radius:8px; padding:10px 14px; font-size:.85rem; }
+    .auth-success { display:none; background:#43e5b022; border:1px solid #43e5b044; color:var(--accent3); border-radius:8px; padding:10px 14px; font-size:.85rem; }
+    .auth-hint { text-align:center; font-size:.8rem; color:var(--muted); margin-top:20px; }
   </style>
 </head>
 <body>
 <div class="auth-wrap">
-
   <div class="auth-logo">
     <h1>Cash<span>Control</span></h1>
     <p>Controle financeiro do casal 💑</p>
@@ -137,7 +42,8 @@
       <button class="auth-tab"        onclick="trocarAba('cadastro', this)">Cadastrar</button>
     </div>
 
-    <div class="auth-error" id="auth-erro"></div>
+    <div class="auth-error"   id="auth-erro"></div>
+    <div class="auth-success" id="auth-ok"></div>
 
     <!-- LOGIN -->
     <form class="auth-form active" id="form-login" onsubmit="fazerLogin(event)">
@@ -177,41 +83,89 @@
   <p class="auth-hint">Seus dados são privados e protegidos 🔒</p>
 </div>
 
-<script type="module">
-  import { auth } from './js/api.js';
+<script>
+  // ── Config Supabase ───────────────────────────────────
+  const SUPABASE_URL      = 'https://capldgdksjefougtspqr.supabase.co';
+  const SUPABASE_ANON_KEY = 'Ssb_publishable_LGFW_ekgbywrYAi_gxvbaA_FMzxFy_Q';
+  const AUTH_URL          = `${SUPABASE_URL}/auth/v1`;
 
-  // Redireciona se já logado
-  if (auth.isLogado()) window.location.href = 'index.html';
+  // ── Verifica se já está logado ────────────────────────
+  (function () {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.includes('auth-token')) {
+        try {
+          const val = JSON.parse(localStorage.getItem(key));
+          if (val?.access_token) {
+            const payload = JSON.parse(atob(val.access_token.split('.')[1]));
+            if (payload.exp * 1000 > Date.now()) {
+              window.location.href = 'index.html';
+              return;
+            }
+          }
+        } catch (_) {}
+      }
+    }
+  })();
 
+  // ── Helpers ───────────────────────────────────────────
   function mostrarErro(msg) {
     const el = document.getElementById('auth-erro');
-    el.textContent = msg;
+    el.textContent = '⚠ ' + msg;
     el.style.display = 'block';
+    document.getElementById('auth-ok').style.display = 'none';
   }
 
-  function esconderErro() {
+  function mostrarOk(msg) {
+    const el = document.getElementById('auth-ok');
+    el.textContent = '✅ ' + msg;
+    el.style.display = 'block';
     document.getElementById('auth-erro').style.display = 'none';
   }
 
+  function esconder() {
+    document.getElementById('auth-erro').style.display = 'none';
+    document.getElementById('auth-ok').style.display   = 'none';
+  }
+
+  function salvarSessao(data) {
+    const projeto = SUPABASE_URL.split('//')[1].split('.')[0];
+    localStorage.setItem(`sb-${projeto}-auth-token`, JSON.stringify(data));
+  }
+
+  async function authReq(path, body) {
+    const res = await fetch(`${AUTH_URL}${path}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error_description || data.msg || data.error || 'Erro desconhecido');
+    return data;
+  }
+
+  // ── Trocar aba ────────────────────────────────────────
   window.trocarAba = (aba, btn) => {
     document.querySelectorAll('.auth-tab').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('form-' + aba).classList.add('active');
-    esconderErro();
+    esconder();
   };
 
+  // ── Login ─────────────────────────────────────────────
   window.fazerLogin = async (e) => {
     e.preventDefault();
-    esconderErro();
+    esconder();
     const btn = document.getElementById('btn-login');
     btn.textContent = 'Entrando...';
     btn.disabled = true;
     try {
-      await auth.login(
-        document.getElementById('login-email').value,
-        document.getElementById('login-senha').value,
-      );
+      const data = await authReq('/token?grant_type=password', {
+        email:    document.getElementById('login-email').value,
+        password: document.getElementById('login-senha').value,
+      });
+      salvarSessao(data);
       window.location.href = 'index.html';
     } catch (err) {
       mostrarErro(err.message);
@@ -220,20 +174,31 @@
     }
   };
 
+  // ── Cadastro ──────────────────────────────────────────
   window.fazerCadastro = async (e) => {
     e.preventDefault();
-    esconderErro();
+    esconder();
     const btn = document.getElementById('btn-cadastro');
     btn.textContent = 'Criando conta...';
     btn.disabled = true;
     try {
-      await auth.cadastro(
-        document.getElementById('cad-nome').value,
-        document.getElementById('cad-email').value,
-        document.getElementById('cad-senha').value,
-        document.getElementById('cad-grupo').value,
-      );
-      window.location.href = 'index.html';
+      const data = await authReq('/signup', {
+        email:    document.getElementById('cad-email').value,
+        password: document.getElementById('cad-senha').value,
+        data: {
+          nome:       document.getElementById('cad-nome').value,
+          nome_grupo: document.getElementById('cad-grupo').value || 'Família',
+        },
+      });
+      if (data.access_token) {
+        salvarSessao(data);
+        window.location.href = 'index.html';
+      } else {
+        // Supabase pode pedir confirmação de email
+        mostrarOk('Conta criada! Verifique seu e-mail para confirmar e depois faça login.');
+        btn.textContent = 'Criar conta';
+        btn.disabled = false;
+      }
     } catch (err) {
       mostrarErro(err.message);
       btn.textContent = 'Criar conta';
