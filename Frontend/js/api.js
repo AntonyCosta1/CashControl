@@ -1,74 +1,95 @@
 // ══════════════════════════════════════════════════════
-//  api.js — Comunicação com o backend CashControl
-//  Substitui o localStorage por chamadas reais à API
+//  api.js — CashControl frontend
+//  Usa Supabase Auth + Edge Functions
+//  Substitua as constantes abaixo pelas suas do Supabase
 // ══════════════════════════════════════════════════════
 
-// ← Troque pela URL do seu backend no Railway após o deploy
-const API_URL = 'https://cashcontrol-api.railway.app';
+// ← Encontre em: Supabase → Settings → API
+const SUPABASE_URL     = 'https://SEU_ID.supabase.co';
+const SUPABASE_ANON_KEY = 'SUA_ANON_KEY';
+const FUNCTIONS_URL    = `${SUPABASE_URL}/functions/v1`;
 
-// ── Helpers internos ──────────────────────────────────
+// ── Helpers de sessão ─────────────────────────────────
 function getToken() {
-  return localStorage.getItem('cc_token');
+  const raw = localStorage.getItem(`sb-${SUPABASE_URL.split('//')[1].split('.')[0]}-auth-token`);
+  if (!raw) return null;
+  try { return JSON.parse(raw)?.access_token; } catch { return null; }
 }
 
-function setSession(data) {
-  localStorage.setItem('cc_token',    data.access_token);
-  localStorage.setItem('cc_usuario',  JSON.stringify(data.usuario));
-  localStorage.setItem('cc_grupo_id', data.grupo_id);
+function getSession() {
+  const raw = localStorage.getItem(`sb-${SUPABASE_URL.split('//')[1].split('.')[0]}-auth-token`);
+  if (!raw) return null;
+  try { return JSON.parse(raw); } catch { return null; }
 }
 
-function clearSession() {
-  localStorage.removeItem('cc_token');
-  localStorage.removeItem('cc_usuario');
-  localStorage.removeItem('cc_grupo_id');
-}
-
-async function req(method, path, body = null) {
-  const headers = { 'Content-Type': 'application/json' };
+// ── Requisição autenticada ────────────────────────────
+async function req(method, fn, params = {}, body = null) {
   const token = getToken();
-  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const qs    = new URLSearchParams(params).toString();
+  const url   = `${FUNCTIONS_URL}/${fn}${qs ? '?' + qs : ''}`;
 
-  const res = await fetch(`${API_URL}${path}`, {
+  const res = await fetch(url, {
     method,
-    headers,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
     body: body ? JSON.stringify(body) : undefined,
   });
 
   if (res.status === 401) {
-    clearSession();
     window.location.href = 'login.html';
     return;
   }
 
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || `Erro ${res.status}`);
-  }
-
   if (res.status === 204) return null;
-  return res.json();
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || `Erro ${res.status}`);
+  return data;
+}
+
+// ── Supabase Auth (via REST direto) ───────────────────
+const AUTH_URL = `${SUPABASE_URL}/auth/v1`;
+
+async function authReq(path, body) {
+  const res = await fetch(`${AUTH_URL}${path}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_ANON_KEY,
+    },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error_description || data.msg || 'Erro na autenticação');
+  return data;
 }
 
 // ── Auth ──────────────────────────────────────────────
 export const auth = {
   async cadastro(nome, email, senha, nomeGrupo = 'Família') {
-    const data = await req('POST', '/auth/cadastro', { nome, email, senha, nome_grupo: nomeGrupo });
-    setSession(data);
+    const data = await authReq('/signup', {
+      email, password: senha,
+      data: { nome, nome_grupo: nomeGrupo },
+    });
+    if (data.access_token) {
+      const key = `sb-${SUPABASE_URL.split('//')[1].split('.')[0]}-auth-token`;
+      localStorage.setItem(key, JSON.stringify(data));
+    }
     return data;
   },
 
   async login(email, senha) {
-    const data = await req('POST', '/auth/login', { email, senha });
-    setSession(data);
+    const data = await authReq('/token?grant_type=password', { email, password: senha });
+    const key  = `sb-${SUPABASE_URL.split('//')[1].split('.')[0]}-auth-token`;
+    localStorage.setItem(key, JSON.stringify(data));
     return data;
   },
 
-  async convidar(emailConvidado) {
-    return req('POST', '/auth/convidar', { email_convidado: emailConvidado });
-  },
-
   logout() {
-    clearSession();
+    const key = `sb-${SUPABASE_URL.split('//')[1].split('.')[0]}-auth-token`;
+    localStorage.removeItem(key);
     window.location.href = 'login.html';
   },
 
@@ -77,55 +98,46 @@ export const auth = {
   },
 
   getUsuario() {
-    const u = localStorage.getItem('cc_usuario');
-    return u ? JSON.parse(u) : null;
+    const s = getSession();
+    return s?.user ?? null;
+  },
+
+  async convidar(emailConvidado) {
+    return req('POST', 'convidar', {}, { email_convidado: emailConvidado });
   },
 };
 
 // ── Despesas ──────────────────────────────────────────
 export const despesasAPI = {
   listar(mes = null) {
-    const qs = mes ? `?mes=${mes}` : '';
-    return req('GET', `/despesas/${qs}`);
+    return req('GET', 'despesas', mes ? { mes } : {});
   },
-
   criar(dados) {
-    return req('POST', '/despesas/', dados);
+    return req('POST', 'despesas', {}, dados);
   },
-
   atualizar(id, dados) {
-    return req('PATCH', `/despesas/${id}`, dados);
+    return req('PATCH', 'despesas', { id }, dados);
   },
-
   deletar(id) {
-    return req('DELETE', `/despesas/${id}`);
-  },
-
-  relatorioCategorias(mes = null) {
-    const qs = mes ? `?mes=${mes}` : '';
-    return req('GET', `/despesas/relatorio/categorias${qs}`);
+    return req('DELETE', 'despesas', { id });
   },
 };
 
 // ── Investimentos ─────────────────────────────────────
 export const investimentosAPI = {
   listar() {
-    return req('GET', '/investimentos/');
+    return req('GET', 'investimentos', {});
   },
-
-  criar(dados) {
-    return req('POST', '/investimentos/', dados);
-  },
-
-  atualizar(id, dados) {
-    return req('PATCH', `/investimentos/${id}`, dados);
-  },
-
-  deletar(id) {
-    return req('DELETE', `/investimentos/${id}`);
-  },
-
   resumo() {
-    return req('GET', '/investimentos/resumo');
+    return req('GET', 'investimentos', { resumo: '1' });
+  },
+  criar(dados) {
+    return req('POST', 'investimentos', {}, dados);
+  },
+  atualizar(id, dados) {
+    return req('PATCH', 'investimentos', { id }, dados);
+  },
+  deletar(id) {
+    return req('DELETE', 'investimentos', { id });
   },
 };
