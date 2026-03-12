@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CashControl — Entrar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+
+    .auth-wrap {
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+    }
+
+    .auth-logo {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .auth-logo h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+    }
+
+    .auth-logo span { color: var(--accent); }
+    .auth-logo p { color: var(--muted); font-size: .9rem; margin-top: 6px; }
+
+    .auth-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px;
+    }
+
+    .auth-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--panel2);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 28px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: 'Syne', sans-serif;
+      font-size: .85rem;
+      font-weight: 700;
+      padding: 9px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .auth-tab.active { background: var(--accent); color: #fff; }
+
+    .auth-form { display: none; flex-direction: column; gap: 16px; }
+    .auth-form.active { display: flex; }
+
+    .auth-form label {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--muted);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .auth-form input {
+      width: 100%;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      font-size: .9rem;
+      outline: none;
+      transition: border .2s;
+    }
+
+    .auth-form input:focus { border-color: var(--accent); }
+
+    .auth-btn {
+      background: linear-gradient(135deg, var(--accent), #4070e0);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-size: .95rem;
+      font-weight: 700;
+      padding: 14px;
+      cursor: pointer;
+      transition: opacity .2s, transform .15s;
+      margin-top: 4px;
+    }
+
+    .auth-btn:hover  { opacity: .9; transform: translateY(-1px); }
+    .auth-btn:active { transform: translateY(0); }
+
+    .auth-error {
+      display: none;
+      background: #ff6b6b22;
+      border: 1px solid #ff6b6b44;
+      color: var(--accent2);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: .85rem;
+    }
+
+    .auth-hint {
+      text-align: center;
+      font-size: .8rem;
+      color: var(--muted);
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+<div class="auth-wrap">
+
+  <div class="auth-logo">
+    <h1>Cash<span>Control</span></h1>
+    <p>Controle financeiro do casal 💑</p>
+  </div>
+
+  <div class="auth-card">
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="trocarAba('login', this)">Entrar</button>
+      <button class="auth-tab"        onclick="trocarAba('cadastro', this)">Cadastrar</button>
+    </div>
+
+    <div class="auth-error" id="auth-erro"></div>
+
+    <!-- LOGIN -->
+    <form class="auth-form active" id="form-login" onsubmit="fazerLogin(event)">
+      <div>
+        <label>E-mail</label>
+        <input type="email" id="login-email" placeholder="seu@email.com" required />
+      </div>
+      <div>
+        <label>Senha</label>
+        <input type="password" id="login-senha" placeholder="••••••••" required />
+      </div>
+      <button type="submit" class="auth-btn" id="btn-login">Entrar</button>
+    </form>
+
+    <!-- CADASTRO -->
+    <form class="auth-form" id="form-cadastro" onsubmit="fazerCadastro(event)">
+      <div>
+        <label>Seu nome</label>
+        <input type="text" id="cad-nome" placeholder="Ex: João" required />
+      </div>
+      <div>
+        <label>E-mail</label>
+        <input type="email" id="cad-email" placeholder="seu@email.com" required />
+      </div>
+      <div>
+        <label>Senha</label>
+        <input type="password" id="cad-senha" placeholder="Mínimo 6 caracteres" minlength="6" required />
+      </div>
+      <div>
+        <label>Nome do grupo familiar</label>
+        <input type="text" id="cad-grupo" placeholder="Ex: Família Costa" value="Família" />
+      </div>
+      <button type="submit" class="auth-btn" id="btn-cadastro">Criar conta</button>
+    </form>
+  </div>
+
+  <p class="auth-hint">Seus dados são privados e protegidos 🔒</p>
+</div>
+
+<script type="module">
+  import { auth } from './js/api.js';
+
+  // Redireciona se já logado
+  if (auth.isLogado()) window.location.href = 'index.html';
+
+  function mostrarErro(msg) {
+    const el = document.getElementById('auth-erro');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  function esconderErro() {
+    document.getElementById('auth-erro').style.display = 'none';
+  }
+
+  window.trocarAba = (aba, btn) => {
+    document.querySelectorAll('.auth-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('form-' + aba).classList.add('active');
+    esconderErro();
+  };
+
+  window.fazerLogin = async (e) => {
+    e.preventDefault();
+    esconderErro();
+    const btn = document.getElementById('btn-login');
+    btn.textContent = 'Entrando...';
+    btn.disabled = true;
+    try {
+      await auth.login(
+        document.getElementById('login-email').value,
+        document.getElementById('login-senha').value,
+      );
+      window.location.href = 'index.html';
+    } catch (err) {
+      mostrarErro(err.message);
+      btn.textContent = 'Entrar';
+      btn.disabled = false;
+    }
+  };
+
+  window.fazerCadastro = async (e) => {
+    e.preventDefault();
+    esconderErro();
+    const btn = document.getElementById('btn-cadastro');
+    btn.textContent = 'Criando conta...';
+    btn.disabled = true;
+    try {
+      await auth.cadastro(
+        document.getElementById('cad-nome').value,
+        document.getElementById('cad-email').value,
+        document.getElementById('cad-senha').value,
+        document.getElementById('cad-grupo').value,
+      );
+      window.location.href = 'index.html';
+    } catch (err) {
+      mostrarErro(err.message);
+      btn.textContent = 'Criar conta';
+      btn.disabled = false;
+    }
+  };
+</script>
+</body>
+</html>
