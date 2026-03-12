@@ -1,7 +1,3 @@
-//  api.js — CashControl frontend
-//  Usa Supabase Auth + Edge Functions
-//  Substitua as constantes abaixo pelas suas do Supabase
-// ← Encontre em: Supabase → Settings → API
 const SUPABASE_URL     = 'https://capldgdksjefougtspqr.supabase.co';
 const SUPABASE_ANON_KEY = 'Ssb_publishable_LGFW_ekgbywrYAi_gxvbaA_FMzxFy_Q';
 const FUNCTIONS_URL    = `${SUPABASE_URL}/functions/v1`;
