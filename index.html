@@ -1,164 +1,225 @@
 <!DOCTYPE html>
 <html lang="PT-BR">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>CashControl - Controle de Gastos</title>
 
-        <!-- LINKS PARA FONTES-->
-        <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"
-        rel="stylesheet"
-        />
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CashControl - Controle de Gastos</title>
 
-        <!-- LINK PARA CSS -->
-        <link rel="stylesheet" href="css/style.css" />
+    <!-- LINKS PARA FONTES-->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"
+        rel="stylesheet" />
 
-        <!-- CHART.JS (CDN) -->
-          <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-    </head>
-    <body>
-        <div class = "app">
-            <header>
-                <div class="logo">
-                    <img src="assets/logo.png" alt="Logo do CashControl" />
-                    <h1>CashControl</h1><span>Controle de Gastos</span>
-                </div>
-                <nav>
-                    <button class="active" onclick="app.showView('dashboard')">Dashboard</button>
-                    <button                onclick="app.showView('registrar')">Registrar</button>
-                    <button                onclick="app.showView('relatorios')">Relatórios</button>
-                </nav>
-            </header>
+    <!-- LINK PARA CSS -->
+    <link rel="stylesheet" href="css/style.css" />
 
-            <div id="view-dashboard" class="view active">
-                <div class="kpi-row" id="kpi-row"></div>
+    <!-- CHART.JS (CDN) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
 
-                <div class="charts-row">
-                    <div class="chart-card">
-                        <div class="chart-title">Gastos por Categoria</div>
-                        <div class="chart-wrap"><canvas id="pieChart"></canvas></div>
-                    </div>
-                    <div class="chart-card">
-                        <div class="chart-title">Gastos Mensais</div>
-                        <div class="chart-wrap"><canvas id="lineChart"></canvas></div>
-                    </div>
-                </div>
-
-                <div class="table-card">
-                    <div class="table-header">
-                        <div class="table-title">Transações Recentes</div>
-                        <input
-                            class="search-box"
-                            type="text"
-                            placeholder="🔍 Buscar..."
-                            oninput="app.filterTable(this.value)"
-                            />
-                    </div>
-                    <div style="overflow-x: auto;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Descrição</th>
-                                    <th>Categoria</th>
-                                    <th>Valor</th>
-                                    <th>Data</th>
-                                </tr>
-                            </thead>
-                            <tbody id="expense-tbody"></tbody>
-                        </table>
-                    </div>
-                </div>
+<body>
+    <div class="app">
+        <header>
+            <div class="logo">
+                <img src="assets/logo.png" alt="Logo do CashControl" />
+                <h1>CashControl</h1><span>Controle de Gastos</span>
             </div>
-            <!-- FIM DO VIEW DO DASHBOARD -->
+            <nav>
+                <button class="active" onclick="app.showView('dashboard')">Dashboard</button>
+                <button onclick="app.showView('registrar')">Registrar</button>
+                <button onclick="app.showView('relatorios')">Relatórios</button>
+            </nav>
+        </header>
 
-            <div id="view-registrar" class="view">
-                <div class="form-card">
-                    <div class="form-title">Nova <span> Despesa</span></div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label> Descrição</label>
-                            <input type="text" id="descricao" placeholder="Ex: Almoço, Uber, etc." />
-                        </div>
-                        <div class="form-group full">
-                            <label> Valor (R$)</label>
-                            <input type="number" id="valor" placeholder="0,00" min="0" step="0.01" />
-                        </div>
-                        <div class="form-group full">
-                            <label> Data</label>
-                            <input type="date" id="data" />
-                        </div>
-                        <div class="form-group">
-                            <label> Categoria</label>
-                            <select id="categoria">
-                                <option value="">Selecione</option>
-                                <option value="Alimentação">Alimentação</option>
-                                <option value="Transporte">Transporte</option>
-                                <option value="Lazer">Lazer</option>
-                                <option value="Saúde">Saúde</option>
-                                <option value="Moradia">Moradia</option>
-                                <option value="Casamento">Casamento</option>
-                                <option value="Outros">Outros</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label> Forma de Pagamento  </label>
-                            <select id="pagamento">
-                                <option value="">Selecione</option>
-                                <option value="Cartão de Crédito">Cartão de Crédito</option>
-                                <option value="Cartão de Débito">Cartão de Débito</option>
-                                <option value="Pix">Pix</option>
-                            </select>
-                        </div>
-                        <div class="form-group full">[
-                            <label> Observações</label>
-                            <input type="text" id="observacoes" placeholder="Anotações adicionais...">
-                        </div>
-                        <div class="form-group full">
-                            <button class="submit-btn" onclick="app.addExpense()">+ Registrar Despesa</button>
-                            <div class="sucess-toast" id="toast">
-                                ✅ Despesa registrada com sucesso!
-                            </div>
-                        </div>
-                    </div>
+        <div id="view-dashboard" class="view active">
+            <div class="kpi-row" id="kpi-row"></div>
+
+            <div class="charts-row">
+                <div class="chart-card">
+                    <div class="chart-title">Gastos por Categoria</div>
+                    <div class="chart-wrap"><canvas id="pieChart"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Gastos Mensais</div>
+                    <div class="chart-wrap"><canvas id="lineChart"></canvas></div>
                 </div>
             </div>
 
-            <!-- ── RELATÓRIOS VIEW ── -->
-            <div id="view-relatorios" class="view">
-                <div class="month-filter">
-                    <label>Filtrar mês:</label>
-                    <select id="mes-filtro" onchange="app.renderReports()">
-                        <option value="all">Todos</option>
-                    </select>
+            <div class="table-card">
+                <div class="table-header">
+                    <div class="table-title">Transações Recentes</div>
+                    <input class="search-box" type="text" placeholder="🔍 Buscar..."
+                        oninput="app.filterTable(this.value)" />
                 </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Descrição</th>
+                                <th>Categoria</th>
+                                <th>Valor</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expense-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- FIM DO VIEW DO DASHBOARD -->
 
-                <div class="reports-grid">
-                    <div class="report-card">
-                        <div class="report-card-title">Gastos por Categoria</div>
-                        <div class="cat-bars"></div>
+        <div id="view-registrar" class="view">
+            <div class="form-card">
+                <div class="form-title">Nova <span> Despesa</span></div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label> Descrição</label>
+                        <input type="text" id="descricao" placeholder="Ex: Almoço, Uber, etc." />
                     </div>
-                    <div class="report-card">
-                        <div class="report-card-title">Gastos Mensais</div>
-                        <div class="chart-wrap" style="height: 180px">
-                            <canvas id="barChart"></canvas>
+                    <div class="form-group full">
+                        <label> Valor (R$)</label>
+                        <input type="number" id="valor" placeholder="0,00" min="0" step="0.01" />
+                    </div>
+                    <div class="form-group full">
+                        <label> Data</label>
+                        <input type="date" id="data" />
+                    </div>
+                    <div class="form-group">
+                        <label> Categoria</label>
+                        <select id="categoria">
+                            <option value="">Selecione</option>
+                            <option value="Alimentação">Alimentação</option>
+                            <option value="Transporte">Transporte</option>
+                            <option value="Lazer">Lazer</option>
+                            <option value="Saúde">Saúde</option>
+                            <option value="Moradia">Moradia</option>
+                            <option value="Casamento">Casamento</option>
+                            <option value="Outros">Outros</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label> Forma de Pagamento </label>
+                        <select id="pagamento">
+                            <option value="">Selecione</option>
+                            <option value="Cartão de Crédito">Cartão de Crédito</option>
+                            <option value="Cartão de Débito">Cartão de Débito</option>
+                            <option value="Pix">Pix</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">[
+                        <label> Observações</label>
+                        <input type="text" id="observacoes" placeholder="Anotações adicionais...">
+                    </div>
+                    <div class="form-group full">
+                        <button class="submit-btn" onclick="app.addExpense()">+ Registrar Despesa</button>
+                        <div class="sucess-toast" id="toast">
+                            ✅ Despesa registrada com sucesso!
                         </div>
-                    </div>
-                </div>
-
-                <div class="report-card">
-                    <div class="report-card-title">Exportar Dados</div>
-                    <div class ="export-row">
-                        <button class="btn-export" onclick="app.handleExportCSV()"> 📊 Exportar Excel / CSV</button>
-                        <button class="btn-export" onclick="app.handleExportPDF()">📄 Exportar Relatório PDF</button>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- ── RELATÓRIOS VIEW ── -->
+        <div id="view-relatorios" class="view">
+            <div class="month-filter">
+                <label>Filtrar mês:</label>
+                <select id="mes-filtro" onchange="app.renderReports()">
+                    <option value="all">Todos</option>
+                </select>
+            </div>
+
+            <div class="reports-grid">
+                <div class="report-card">
+                    <div class="report-card-title">Gastos por Categoria</div>
+                    <div class="cat-bars"></div>
+                </div>
+                <div class="report-card">
+                    <div class="report-card-title">Gastos Mensais</div>
+                    <div class="chart-wrap" style="height: 180px">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-card-title">Exportar Dados</div>
+                <div class="export-row">
+                    <button class="btn-export" onclick="app.handleExportCSV()"> 📊 Exportar Excel / CSV</button>
+                    <button class="btn-export" onclick="app.handleExportPDF()">📄 Exportar Relatório PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="view-investimentos">
+        <div class="form-card">
+            <style>
+                .form-card {
+                    max-width: 400px;
+                    margin: 40px auto;
+                    padding: 20px;
+                    background-color: #5b8fff33;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                }
+
+                .form-title {
+                    font-size: 24px;
+                    font-weight: bold;
+                    margin-bottom: 20px;
+                    color: #ffffff;
+                }
+
+                .form-title span {
+                    color: #007bff;
+                }
+
+                .form-grid {
+                    display: grid;
+                    gap: 15px;
+                }
+
+                .form-group {
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                .form-group label {
+                    margin-bottom: 5px;
+                    font-weight: 500;
+                }
+
+                .form-group input,
+                .form-group select {
+                    padding: 10px;
+                    border: 1px solid #5b8fff33;
+                    border-radius: 4px;
+                }
+                </style>
+            <div class="form-title">Registrar <span> Investimento</span></div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label> Tipo de Investimento</label>
+                    <select id="tipo-investimento">
+                        <option value="">Selecione</option>
+                        <option value="Ações">Ações</option>
+                        <option value="Fundos Imobiliários">Fundos Imobiliários</option>
+                        <option value="Tesouro Direto">Tesouro Direto</option>
+                        <option value="Criptomoedas">Criptomoedas</option>
+                        <option value="Outros">Outros</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- App module (exposes functions via window.app) -->
-     <script type="module">
+    <script type="module">
         import * as appModule from './js/app.js';
         window.app = appModule;
-     </script>
-    </body>
+    </script>
+</body>
+
 </html>
