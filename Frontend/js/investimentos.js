@@ -34,6 +34,18 @@ function saveInvestimentos() {
   localStorage.setItem('cc_investimentos', JSON.stringify(investimentos));
 }
 
+window.fazerLogout = function() {
+  const keysToRemove = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && (key.includes('auth-token') || key.includes('supabase'))) {
+      keysToRemove.push(key);
+    }
+  }
+  keysToRemove.forEach(k => localStorage.removeItem(k));
+  window.location.href = 'login.html';
+};
+
 // ── Formatação ────────────────────────────────────────────────────────────
 function fmt(v) {
   return 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
