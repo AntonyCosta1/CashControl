@@ -214,6 +214,8 @@ async function addExpense() {
 }
 
 async function deleteExpense(id) {
+  if (!confirm('Deseja excluir esta despesa?')) return;
+
   try {
     await despesasAPI.deletar(id);
     await carregarDespesas();
@@ -222,7 +224,6 @@ async function deleteExpense(id) {
     alert('Erro ao excluir despesa: ' + error.message);
   }
 }
-
 // ── Gráficos ──────────────────────────────────────────────────────────────
 function renderPieChart() {
   const catData = sumByCat(expenses);
