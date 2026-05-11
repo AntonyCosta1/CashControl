@@ -1,4 +1,4 @@
-import { investimentosAPI } from "./api.js";
+import { investimentosAPI, getMeuPerfil } from "./api.js";
 
 // ── Configuração de Tipos ─────────────────────────────────────────────────
 const TIPOS = {
@@ -198,6 +198,7 @@ async function addInvestimento() {
   }
 
   try {
+    const perfil = await getMeuPerfil();
 
     await investimentosAPI.criar({
       nome,
@@ -205,25 +206,65 @@ async function addInvestimento() {
       investido,
       atual,
       data,
-      observacoes: obs
+      observacoes: obs,
+      usuario_id: perfil.id,
+      grupo_id: perfil.grupo_id
     });
 
     await carregarInvestimentos();
 
-    // Limpar campos
     document.getElementById('inv-nome').value = '';
     document.getElementById('inv-tipo').value = '';
     document.getElementById('inv-valor').value = '';
     document.getElementById('inv-atual').value = '';
     document.getElementById('inv-obs').value = '';
 
-    // Toast
     const toast = document.getElementById('inv-toast');
     toast.style.display = 'block';
+    setTimeout(() => (toast.style.display = 'none'), 2500);
 
-    setTimeout(() => {
-      toast.style.display = 'none';
-    }, 2500);
+  } catch (error) {
+    console.error(error);
+    alert('Erro ao salvar investimento: ' + error.message);
+  }
+}async function addInvestimento() {
+  const nome = document.getElementById('inv-nome').value.trim();
+  const tipo = document.getElementById('inv-tipo').value;
+  const investido = parseFloat(document.getElementById('inv-valor').value);
+  const data = document.getElementById('inv-data').value;
+  const atual = parseFloat(document.getElementById('inv-atual').value) || investido;
+  const obs = document.getElementById('inv-obs').value.trim();
+
+  if (!nome || !tipo || !investido || !data) {
+    alert('Preencha Nome, Tipo, Valor Investido e Data.');
+    return;
+  }
+
+  try {
+    const perfil = await getMeuPerfil();
+
+    await investimentosAPI.criar({
+      nome,
+      tipo,
+      investido,
+      atual,
+      data,
+      observacoes: obs,
+      usuario_id: perfil.id,
+      grupo_id: perfil.grupo_id
+    });
+
+    await carregarInvestimentos();
+
+    document.getElementById('inv-nome').value = '';
+    document.getElementById('inv-tipo').value = '';
+    document.getElementById('inv-valor').value = '';
+    document.getElementById('inv-atual').value = '';
+    document.getElementById('inv-obs').value = '';
+
+    const toast = document.getElementById('inv-toast');
+    toast.style.display = 'block';
+    setTimeout(() => (toast.style.display = 'none'), 2500);
 
   } catch (error) {
     console.error(error);
@@ -257,3 +298,7 @@ function renderAll() {
 investimentos = loadInvestimentos();
 document.getElementById('inv-data').value = new Date().toISOString().split('T')[0];
 renderAll();
+
+window.addInvestimento = addInvestimento;
+window.deleteInvestimento = deleteInvestimento;
+window.filterInvestimentos = filterInvestimentos;
