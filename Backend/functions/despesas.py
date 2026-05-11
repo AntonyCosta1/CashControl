@@ -4,7 +4,7 @@ from typing import Optional
 from datetime import date
 from asyncpg import Connection
 
-from db.database import get_db
+from database.database import get_db
 from middleware.auth import get_usuario_atual
 
 router = APIRouter(prefix="/despesas", tags=["Despesas"])
