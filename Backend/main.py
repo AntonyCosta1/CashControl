@@ -15,9 +15,7 @@ app = FastAPI(
 
 # ── CORS ──────────────────────────────────────────────
 origins = [
-    os.getenv("FRONTEND_URL", "http://localhost:5500"),
-    "http://localhost:3000",
-    "http://127.0.0.1:5500",
+    os.getenv("FRONTEND_URL", "https://cash-control-beryl.vercel.app")
 ]
 
 app.add_middleware(
