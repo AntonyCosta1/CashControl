@@ -1,91 +1,86 @@
-import { investimentosAPI, auth } from './api.js';
+import { investimentosAPI } from "./api.js";
 
 // ── Configuração de Tipos ─────────────────────────────────────────────────
 const TIPOS = {
-  'Ações':               { color: '#5b8fff', cls: 'badge-acoes',      emoji: '📈' },
-  'Fundos Imobiliários': { color: '#c77dff', cls: 'badge-fundos',     emoji: '🏢' },
-  'Tesouro Direto':      { color: '#43e5b0', cls: 'badge-tesouro',    emoji: '🏛' },
-  'Criptomoedas':        { color: '#f9c74f', cls: 'badge-cripto',     emoji: '₿'  },
-  'Renda Fixa':          { color: '#ff9fdb', cls: 'badge-rendafixa',  emoji: '💰' },
-  'Poupança':            { color: '#80ffdb', cls: 'badge-poupanca',   emoji: '🐷' },
-  'Outros':              { color: '#aaaaaa', cls: 'badge-inv-outros', emoji: '📦' },
+  'Ações':              { color: '#5b8fff', cls: 'badge-acoes',      emoji: '📈' },
+  'Fundos Imobiliários':{ color: '#c77dff', cls: 'badge-fundos',     emoji: '🏢' },
+  'Tesouro Direto':     { color: '#43e5b0', cls: 'badge-tesouro',    emoji: '🏛' },
+  'Criptomoedas':       { color: '#f9c74f', cls: 'badge-cripto',     emoji: '₿'  },
+  'Renda Fixa':         { color: '#ff9fdb', cls: 'badge-rendafixa',  emoji: '💰' },
+  'Poupança':           { color: '#80ffdb', cls: 'badge-poupanca',   emoji: '🐷' },
+  'Outros':             { color: '#aaaaaa', cls: 'badge-inv-outros', emoji: '📦' },
 };
+
+// ── Seed ──────────────────────────────────────────────────────────────────
+const SEED = [
+  { id: 1, nome: 'PETR4',            tipo: 'Ações',               investido: 1500.00, atual: 1720.00, data: '2025-08-10', obs: 'Petrobras ON' },
+  { id: 2, nome: 'HGLG11',           tipo: 'Fundos Imobiliários', investido: 800.00,  atual: 760.00,  data: '2025-09-05', obs: 'FII Logístico' },
+  { id: 3, nome: 'Tesouro IPCA 2029',tipo: 'Tesouro Direto',      investido: 2000.00, atual: 2180.00, data: '2025-06-01', obs: '' },
+  { id: 4, nome: 'Bitcoin',          tipo: 'Criptomoedas',        investido: 500.00,  atual: 640.00,  data: '2025-11-20', obs: 'Binance' },
+  { id: 5, nome: 'CDB Banco Inter',  tipo: 'Renda Fixa',          investido: 3000.00, atual: 3120.00, data: '2025-07-15', obs: '110% CDI, venc. 2027' },
+];
 
 // ── Estado ────────────────────────────────────────────────────────────────
 let investimentos = [];
-let pieInstance = null;
+let pieInstance   = null;
 
-// ── Normalização dos dados vindos do banco ────────────────────────────────
-function normalizarInvestimento(i) {
-  return {
-    id: i.id,
-    nome: i.nome ?? '',
-    tipo: i.tipo ?? 'Outros',
-    investido: Number(i.investido ?? i.valor_investido ?? 0),
-    atual: Number(i.atual ?? i.valor_atual ?? i.investido ?? i.valor_investido ?? 0),
-    data: i.data ?? '',
-    obs: i.obs ?? i.observacoes ?? '',
-  };
+// ── Storage ───────────────────────────────────────────────────────────────
+function loadInvestimentos() {
+  const stored = localStorage.getItem('cc_investimentos');
+  if (stored) return JSON.parse(stored);
+  localStorage.setItem('cc_investimentos', JSON.stringify(SEED));
+  return [...SEED];
 }
 
-// ── Banco / API ───────────────────────────────────────────────────────────
-async function carregarInvestimentos() {
-  try {
-    const data = await investimentosAPI.listar();
-    investimentos = Array.isArray(data) ? data.map(normalizarInvestimento) : [];
-    renderAll();
-  } catch (error) {
-    console.error(error);
-    alert('Erro ao carregar investimentos: ' + error.message);
+function saveInvestimentos() {
+  localStorage.setItem('cc_investimentos', JSON.stringify(investimentos));
+}
+
+window.fazerLogout = function() {
+  const keysToRemove = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && (key.includes('auth-token') || key.includes('supabase'))) {
+      keysToRemove.push(key);
+    }
   }
-}
-
-window.fazerLogout = function () {
-  auth.logout();
+  keysToRemove.forEach(k => localStorage.removeItem(k));
+  window.location.href = 'login.html';
 };
 
 // ── Formatação ────────────────────────────────────────────────────────────
 function fmt(v) {
-  return 'R$ ' + Number(v || 0).toLocaleString('pt-BR', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
+  return 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 function fmtDate(d) {
-  if (!d) return '—';
   const [y, m, day] = d.split('-');
   return `${day}/${m}/${y}`;
 }
 
 function fmtRent(investido, atual) {
   if (!investido || investido === 0) return '<span class="rent-zero">—</span>';
-
   const pct = ((atual - investido) / investido) * 100;
   const val = atual - investido;
   const sinal = pct >= 0 ? '+' : '';
-  const cls = pct > 0 ? 'rent-pos' : pct < 0 ? 'rent-neg' : 'rent-zero';
-
+  const cls   = pct > 0 ? 'rent-pos' : pct < 0 ? 'rent-neg' : 'rent-zero';
   return `<span class="${cls}">${sinal}${pct.toFixed(2)}%<br><small>${sinal}${fmt(val)}</small></span>`;
 }
 
 // ── KPI Cards ─────────────────────────────────────────────────────────────
 function renderKPIs() {
   const totalInvestido = investimentos.reduce((s, i) => s + i.investido, 0);
-  const totalAtual = investimentos.reduce((s, i) => s + (i.atual || i.investido), 0);
-  const lucro = totalAtual - totalInvestido;
-  const rentPct = totalInvestido > 0 ? (lucro / totalInvestido) * 100 : 0;
+  const totalAtual     = investimentos.reduce((s, i) => s + (i.atual || i.investido), 0);
+  const lucro          = totalAtual - totalInvestido;
+  const rentPct        = totalInvestido > 0 ? (lucro / totalInvestido) * 100 : 0;
 
   const melhor = [...investimentos].sort((a, b) => {
-    const ra = a.investido ? ((a.atual || a.investido) - a.investido) / a.investido : 0;
-    const rb = b.investido ? ((b.atual || b.investido) - b.investido) / b.investido : 0;
+    const ra = ((a.atual || a.investido) - a.investido) / a.investido;
+    const rb = ((b.atual || b.investido) - b.investido) / b.investido;
     return rb - ra;
   })[0];
 
-  const kpiRow = document.getElementById('inv-kpi-row');
-  if (!kpiRow) return;
-
-  kpiRow.innerHTML = `
+  document.getElementById('inv-kpi-row').innerHTML = `
     <div class="kpi-card">
       <div class="kpi-label">Total Investido</div>
       <div class="kpi-value">${fmt(totalInvestido)}</div>
@@ -111,21 +106,18 @@ function renderKPIs() {
 
 // ── Gráfico de alocação ───────────────────────────────────────────────────
 function renderPieChart() {
-  const canvas = document.getElementById('invPieChart');
-  if (!canvas || typeof Chart === 'undefined') return;
-
   const grouped = investimentos.reduce((acc, i) => {
     acc[i.tipo] = (acc[i.tipo] || 0) + (i.atual || i.investido);
     return acc;
   }, {});
 
-  const tipos = Object.keys(grouped);
-  const vals = tipos.map(t => grouped[t]);
+  const tipos  = Object.keys(grouped);
+  const vals   = tipos.map(t => grouped[t]);
   const colors = tipos.map(t => TIPOS[t]?.color || '#aaa');
 
   if (pieInstance) pieInstance.destroy();
 
-  pieInstance = new Chart(canvas, {
+  pieInstance = new Chart(document.getElementById('invPieChart'), {
     type: 'doughnut',
     data: {
       labels: tipos,
@@ -139,12 +131,7 @@ function renderPieChart() {
     },
     options: {
       plugins: {
-        legend: {
-          labels: {
-            color: '#e8ecf5',
-            font: { family: 'DM Sans', size: 12 },
-          },
-        },
+        legend: { labels: { color: '#e8ecf5', font: { family: 'DM Sans', size: 12 } } },
       },
       cutout: '62%',
     },
@@ -153,14 +140,11 @@ function renderPieChart() {
 
 // ── Tabela ────────────────────────────────────────────────────────────────
 function renderTabela(data) {
-  const tbody = document.getElementById('inv-tbody');
-  if (!tbody) return;
-
-  const sorted = [...data].sort((a, b) => String(b.data).localeCompare(String(a.data)));
+  const sorted = [...data].sort((a, b) => b.data.localeCompare(a.data));
+  const tbody  = document.getElementById('inv-tbody');
 
   tbody.innerHTML = sorted.map(i => {
     const atual = i.atual ?? i.investido;
-
     return `
       <tr>
         <td>
@@ -173,7 +157,7 @@ function renderTabela(data) {
         <td>${fmtRent(i.investido, atual)}</td>
         <td style="color:var(--muted)">${fmtDate(i.data)}</td>
         <td>
-          <button class="delete-btn" onclick="deleteInvestimento('${i.id}')" title="Remover">✕</button>
+          <button class="delete-btn" onclick="deleteInvestimento(${i.id})" title="Remover">✕</button>
         </td>
       </tr>
     `;
@@ -187,70 +171,51 @@ function renderTabela(data) {
 
 function filterInvestimentos(query) {
   const q = query.toLowerCase();
-
   const filtered = q
     ? investimentos.filter(i =>
         i.nome.toLowerCase().includes(q) ||
         i.tipo.toLowerCase().includes(q))
     : investimentos;
-
   renderTabela(filtered);
 }
 
 // ── Adicionar ─────────────────────────────────────────────────────────────
-async function addInvestimento() {
-  const nome = document.getElementById('inv-nome').value.trim();
-  const tipo = document.getElementById('inv-tipo').value;
+function addInvestimento() {
+  const nome     = document.getElementById('inv-nome').value.trim();
+  const tipo     = document.getElementById('inv-tipo').value;
   const investido = parseFloat(document.getElementById('inv-valor').value);
-  const data = document.getElementById('inv-data').value;
-  const atual = parseFloat(document.getElementById('inv-atual').value) || investido;
-  const obs = document.getElementById('inv-obs').value.trim();
+  const data     = document.getElementById('inv-data').value;
+  const atual    = parseFloat(document.getElementById('inv-atual').value) || investido;
+  const obs      = document.getElementById('inv-obs').value.trim();
 
   if (!nome || !tipo || !investido || !data) {
     alert('Preencha Nome, Tipo, Valor Investido e Data.');
     return;
   }
 
-  try {
-    await investimentosAPI.criar({
-      nome,
-      tipo,
-      investido,
-      atual,
-      data,
-      observacoes: obs,
-    });
+  investimentos.push({ id: Date.now(), nome, tipo, investido, atual, data, obs });
+  saveInvestimentos();
 
-    document.getElementById('inv-nome').value = '';
-    document.getElementById('inv-tipo').value = '';
-    document.getElementById('inv-valor').value = '';
-    document.getElementById('inv-atual').value = '';
-    document.getElementById('inv-obs').value = '';
+  // Limpar campos
+  document.getElementById('inv-nome').value  = '';
+  document.getElementById('inv-tipo').value  = '';
+  document.getElementById('inv-valor').value = '';
+  document.getElementById('inv-atual').value = '';
+  document.getElementById('inv-obs').value   = '';
 
-    const toast = document.getElementById('inv-toast');
-    if (toast) {
-      toast.style.display = 'block';
-      setTimeout(() => (toast.style.display = 'none'), 2500);
-    }
+  // Toast
+  const toast = document.getElementById('inv-toast');
+  toast.style.display = 'block';
+  setTimeout(() => (toast.style.display = 'none'), 2500);
 
-    await carregarInvestimentos();
-  } catch (error) {
-    console.error(error);
-    alert('Erro ao salvar investimento: ' + error.message);
-  }
+  renderAll();
 }
 
 // ── Deletar ───────────────────────────────────────────────────────────────
-async function deleteInvestimento(id) {
-  if (!confirm('Deseja remover este investimento?')) return;
-
-  try {
-    await investimentosAPI.deletar(id);
-    await carregarInvestimentos();
-  } catch (error) {
-    console.error(error);
-    alert('Erro ao remover investimento: ' + error.message);
-  }
+function deleteInvestimento(id) {
+  investimentos = investimentos.filter(i => i.id !== id);
+  saveInvestimentos();
+  renderAll();
 }
 
 // ── Render geral ──────────────────────────────────────────────────────────
@@ -260,15 +225,7 @@ function renderAll() {
   renderTabela(investimentos);
 }
 
-// ── Expor funções globalmente ─────────────────────────────────────────────
-window.addInvestimento = addInvestimento;
-window.deleteInvestimento = deleteInvestimento;
-window.filterInvestimentos = filterInvestimentos;
-
 // ── Init ──────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', async () => {
-  const inputData = document.getElementById('inv-data');
-  if (inputData) inputData.value = new Date().toISOString().split('T')[0];
-
-  await carregarInvestimentos();
-});
+investimentos = loadInvestimentos();
+document.getElementById('inv-data').value = new Date().toISOString().split('T')[0];
+renderAll();
