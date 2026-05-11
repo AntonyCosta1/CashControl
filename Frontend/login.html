@@ -12,7 +12,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
   <style>
-    body { display:flex; align-items:center; justify-content:center; min-height:100vh; }
+    body { display:flex; align-items:center; justify-content:center; min-height:100vh; padding: 10px; }
     .auth-wrap { width:100%; max-width:420px; padding:20px; }
     .auth-logo { text-align:center; margin-bottom:36px; }
     .auth-logo h1 { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; }
@@ -32,6 +32,38 @@
     .auth-error { display:none; background:#ff6b6b22; border:1px solid #ff6b6b44; color:var(--accent2); border-radius:8px; padding:10px 14px; font-size:.85rem; }
     .auth-success { display:none; background:#43e5b022; border:1px solid #43e5b044; color:var(--accent3); border-radius:8px; padding:10px 14px; font-size:.85rem; }
     .auth-hint { text-align:center; font-size:.8rem; color:var(--muted); margin-top:20px; }
+
+    /* Mobile Responsivo */
+    @media (max-width: 768px) {
+      .auth-wrap { padding: 16px; }
+      .auth-logo { margin-bottom: 28px; }
+      .auth-logo h1 { font-size: 1.6rem; }
+      .auth-card { padding: 28px; border-radius: 12px; }
+      .auth-tabs { gap: 3px; padding: 3px; margin-bottom: 24px; }
+      .auth-tab { font-size: 0.8rem; padding: 8px; border-radius: 6px; }
+      .auth-form { gap: 14px; }
+      .auth-form label { font-size: 0.7rem; }
+      .auth-btn { padding: 12px; font-size: 0.9rem; }
+      .auth-error, .auth-success { font-size: 0.8rem; padding: 8px 12px; }
+      .auth-hint { font-size: 0.75rem; margin-top: 16px; }
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 8px; }
+      .auth-wrap { padding: 12px; max-width: 100%; }
+      .auth-logo { margin-bottom: 24px; }
+      .auth-logo h1 { font-size: 1.3rem; }
+      .auth-logo p { font-size: 0.8rem; }
+      .auth-card { padding: 20px; border-radius: 10px; }
+      .auth-tabs { gap: 2px; padding: 2px; margin-bottom: 20px; }
+      .auth-tab { font-size: 0.7rem; padding: 7px; border-radius: 5px; }
+      .auth-form { gap: 12px; }
+      .auth-form label { font-size: 0.65rem; }
+      .auth-form input { padding: 10px 12px; font-size: 0.85rem; }
+      .auth-btn { padding: 11px; font-size: 0.85rem; }
+      .auth-error, .auth-success { font-size: 0.75rem; padding: 8px 10px; }
+      .auth-hint { font-size: 0.7rem; margin-top: 14px; }
+    }
   </style>
 </head>
 <body>

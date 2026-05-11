@@ -1,8 +1,3 @@
-// ── auth-guard.js ─────────────────────────────────────
-// Inclua esse script em TODAS as páginas protegidas
-// (index.html e investimentos.html)
-// Deve vir ANTES do app.js / investimentos.js
-
 (function () {
   const SUPABASE_URL = window.SUPABASE_URL || '';
 

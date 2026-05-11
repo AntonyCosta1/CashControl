@@ -461,9 +461,315 @@ select option { background: var(--panel); }
 .month-filter select { padding: 8px 14px; font-size: 0.85rem; border-radius: 8px; width: auto; }
 
 /* ── RESPONSIVE ── */
-@media (max-width: 600px) {
-  .table-header  { flex-direction: column; gap: 12px; }
-  .search-box    { width: 100%; }
+@media (max-width: 1024px) {
+  .app { padding: 20px 16px 60px; }
+  .logo h1 { font-size: 1.2rem; }
+  nav button { padding: 6px 14px; font-size: 0.8rem; }
+  .kpi-row { gap: 12px; }
+  .form-card { padding: 28px; }
+}
+
+@media (max-width: 768px) {
+  .app { padding: 16px 12px 60px; }
+  
+  header { 
+    flex-direction: column; 
+    gap: 16px; 
+    margin-bottom: 28px;
+  }
+  
+  nav { 
+    width: 100%; 
+    flex-wrap: wrap;
+  }
+  
+  nav button { 
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 0.75rem;
+  }
+  
+  .logo { 
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .logo h1 { font-size: 1rem; }
+  .logo img { height: 36px; }
+  
+  .kpi-row { 
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .kpi-value { font-size: 1.4rem; }
+  .kpi-label { font-size: 0.7rem; }
+  
+  .charts-row { gap: 12px; }
+  .chart-wrap { height: 180px; }
+  
+  .form-card { 
+    padding: 20px; 
+    max-width: 100%;
+  }
+  
+  .form-title { 
+    font-size: 1.1rem; 
+    margin-bottom: 20px;
+  }
+  
+  .form-grid { gap: 14px; }
+  
+  .reports-grid { gap: 12px; }
+  
+  .table-card { border-radius: 12px; }
+  
+  .table-header { 
+    flex-direction: column; 
+    gap: 12px;
+    padding: 16px 16px;
+  }
+  
+  .table-title { font-size: 0.9rem; }
+  .search-box { width: 100%; }
+  
+  th { 
+    padding: 8px 12px;
+    font-size: 0.65rem;
+  }
+  
+  td { 
+    padding: 12px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .badge { font-size: 0.7rem; padding: 2px 8px; }
+  
+  .delete-btn { padding: 3px 6px; font-size: 0.9rem; }
+  
+  .btn-export { padding: 10px; font-size: 0.8rem; }
+  
+  .month-filter { 
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .month-filter select { font-size: 0.8rem; }
+  
+  .cat-label { width: 90px; font-size: 0.75rem; }
+  .cat-value { width: 70px; font-size: 0.75rem; }
+}
+
+@media (max-width: 480px) {
+  .app { padding: 12px 10px 50px; }
+  
+  header {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .logo {
+    width: 100%;
+    gap: 8px;
+  }
+  
+  .logo img { height: 32px; }
+  .logo h1 { font-size: 0.95rem; }
+  .logo span { font-size: 0.9rem; }
+  
+  nav {
+    width: 100%;
+    flex-direction: column;
+    padding: 8px;
+    gap: 4px;
+  }
+  
+  nav button {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 0.7rem;
+    border-radius: 8px;
+  }
+  
+  .kpi-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .kpi-card {
+    padding: 16px 18px;
+  }
+  
+  .kpi-value { font-size: 1.2rem; }
+  .kpi-label { font-size: 0.65rem; }
+  .kpi-sub { font-size: 0.65rem; }
+  
+  .charts-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .chart-card { 
+    padding: 16px;
+    border-radius: 12px;
+  }
+  
+  .chart-title { 
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+  
+  .chart-wrap { height: 150px; }
+  
+  .table-card {
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .table-header {
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .table-title { 
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+  
+  .search-box {
+    width: 100%;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+  
+  table { font-size: 0.75rem; }
+  
+  th {
+    padding: 8px 8px;
+    font-size: 0.6rem;
+    letter-spacing: 0.04em;
+  }
+  
+  td {
+    padding: 10px 8px;
+    font-size: 0.75rem;
+  }
+  
+  .badge {
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 16px;
+  }
+  
+  .delete-btn {
+    padding: 2px 4px;
+    font-size: 0.85rem;
+  }
+  
+  .form-card {
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .form-title {
+    font-size: 1rem;
+    margin-bottom: 18px;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .form-group { gap: 6px; }
+  
+  label {
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+  }
+  
+  input, select, textarea {
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+  }
+  
+  .submit-btn {
+    padding: 12px 20px;
+    font-size: 0.85rem;
+    margin-top: 6px;
+  }
+  
+  .success-toast,
+  .sucess-toast {
+    font-size: 0.8rem;
+    padding: 10px 16px;
+  }
+  
+  .reports-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .report-card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+  
+  .report-card-title {
+    font-size: 0.8rem;
+    margin-bottom: 12px;
+  }
+  
+  .cat-row {
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .cat-label {
+    width: 80px;
+    font-size: 0.7rem;
+  }
+  
+  .cat-value {
+    width: 60px;
+    font-size: 0.7rem;
+  }
+  
+  .cat-bar-wrap { height: 5px; }
+  
+  .export-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .btn-export {
+    padding: 10px;
+    font-size: 0.75rem;
+  }
+  
+  .month-filter {
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .month-filter label {
+    font-size: 0.7rem;
+  }
+  
+  .month-filter select {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
 }
 
 /* ── INVESTIMENTOS ── */
@@ -477,4 +783,26 @@ select option { background: var(--panel); }
 
 .view-investimentos .form-card {
   max-width: 500px;
+}
+
+/* Media queries para investimentos em mobile */
+@media (max-width: 768px) {
+  .view-investimentos {
+    padding: 0 12px 50px;
+  }
+  
+  .view-investimentos .form-card {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .view-investimentos {
+    padding: 0 10px 40px;
+  }
+  
+  .view-investimentos .form-card {
+    max-width: 100%;
+    padding: 16px;
+  }
 }
