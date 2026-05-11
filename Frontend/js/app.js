@@ -150,7 +150,7 @@ function renderTable(data) {
       <td><span class="badge ${CATS[e.cat]?.cls || 'badge-outros'}">${e.cat}</span></td>
       <td style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent2)">${fmt(e.val)}</td>
       <td style="color:var(--muted)">${fmtDate(e.date)}</td>
-      <td><button class="delete-btn" onclick="deleteExpense(${e.id})">✕</button></td>
+      <td><button class="delete-btn" onclick="deleteExpense('${e.id}')">✕</button></td>
     </tr>
   `).join('') || `
     <tr>
