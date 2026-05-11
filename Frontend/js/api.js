@@ -1,7 +1,24 @@
 const SUPABASE_URL = 'https://gjquafybaidptzpgmbsq.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_F8jMtjU4DtQaD5Op2pcufg_6aZWHCf-';
-
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+export async function getMeuPerfil() {
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+
+  if (userError) throw userError;
+
+  const usuarioId = userData.user.id;
+
+  const { data, error } = await supabase
+    .from('perfis')
+    .select('id, grupo_id')
+    .eq('id', usuarioId)
+    .single();
+
+  if (error) throw error;
+
+  return data;
+}
 
 export const despesasAPI = {
   async listar() {

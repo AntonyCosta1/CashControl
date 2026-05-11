@@ -1,4 +1,4 @@
-import { despesasAPI } from './api.js';
+import { despesasAPI, getMeuPerfil } from './api.js';
 
 // ── Configuração de Categorias ────────────────────────────────────────────
 const CATS = {
@@ -178,6 +178,7 @@ async function addExpense() {
   const cat = document.getElementById('categoria').value;
   const pay = document.getElementById('pagamento').value;
   const obs = document.getElementById('observacoes').value.trim();
+  const perfil = await getMeuPerfil();
 
   if (!desc || !val || !date) {
     alert('Preencha Descrição, Valor e Data.');
@@ -191,7 +192,9 @@ async function addExpense() {
       valor: val,
       data: date,
       pagamento: pay,
-      observacoes: obs
+      observacoes: obs,
+      usuario_id: perfil.id,
+      grupo_id: perfil.grupo_id
     });
 
     await carregarDespesas();
