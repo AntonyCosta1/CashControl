@@ -161,7 +161,7 @@ function renderTabela(data) {
         <td>${fmtRent(i.investido, atual)}</td>
         <td style="color:var(--muted)">${fmtDate(i.data)}</td>
         <td>
-          <button class="delete-btn" onclick="deleteInvestimento(${i.id})" title="Remover">✕</button>
+          <button class="delete-btn" onclick="deleteInvestimento('${i.id}')" title="Remover">✕</button>
         </td>
       </tr>
     `;
@@ -185,49 +185,6 @@ function filterInvestimentos(query) {
 
 // ── Adicionar ─────────────────────────────────────────────────────────────
 async function addInvestimento() {
-  const nome = document.getElementById('inv-nome').value.trim();
-  const tipo = document.getElementById('inv-tipo').value;
-  const investido = parseFloat(document.getElementById('inv-valor').value);
-  const data = document.getElementById('inv-data').value;
-  const atual = parseFloat(document.getElementById('inv-atual').value) || investido;
-  const obs = document.getElementById('inv-obs').value.trim();
-
-  if (!nome || !tipo || !investido || !data) {
-    alert('Preencha Nome, Tipo, Valor Investido e Data.');
-    return;
-  }
-
-  try {
-    const perfil = await getMeuPerfil();
-
-    await investimentosAPI.criar({
-      nome,
-      tipo,
-      investido,
-      atual,
-      data,
-      observacoes: obs,
-      usuario_id: perfil.id,
-      grupo_id: perfil.grupo_id
-    });
-
-    await carregarInvestimentos();
-
-    document.getElementById('inv-nome').value = '';
-    document.getElementById('inv-tipo').value = '';
-    document.getElementById('inv-valor').value = '';
-    document.getElementById('inv-atual').value = '';
-    document.getElementById('inv-obs').value = '';
-
-    const toast = document.getElementById('inv-toast');
-    toast.style.display = 'block';
-    setTimeout(() => (toast.style.display = 'none'), 2500);
-
-  } catch (error) {
-    console.error(error);
-    alert('Erro ao salvar investimento: ' + error.message);
-  }
-}async function addInvestimento() {
   const nome = document.getElementById('inv-nome').value.trim();
   const tipo = document.getElementById('inv-tipo').value;
   const investido = parseFloat(document.getElementById('inv-valor').value);
@@ -294,11 +251,13 @@ function renderAll() {
   renderTabela(investimentos);
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────
-investimentos = loadInvestimentos();
-document.getElementById('inv-data').value = new Date().toISOString().split('T')[0];
-renderAll();
-
+// ── Expor funções para o HTML ─────────────────────────────────────────────
 window.addInvestimento = addInvestimento;
 window.deleteInvestimento = deleteInvestimento;
 window.filterInvestimentos = filterInvestimentos;
+
+// ── Init ──────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+  document.getElementById('inv-data').value = new Date().toISOString().split('T')[0];
+  await carregarInvestimentos();
+});
