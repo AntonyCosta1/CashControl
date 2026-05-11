@@ -11,19 +11,6 @@ const CATS = {
   'Outros': { color: '#aaaaaa', cls: 'badge-outros' },
 };
 
-// ── Seed data ─────────────────────────────────────────────────────────────
-const SEED = [
-  { id: 1, desc: 'Supermercado', cat: 'Alimentação', val: 320.50, date: '2026-02-05', pay: 'Cartão de Débito', obs: '' },
-  { id: 2, desc: 'Uber', cat: 'Transporte', val: 45.00, date: '2026-02-08', pay: 'Pix', obs: '' },
-  { id: 3, desc: 'Netflix', cat: 'Lazer', val: 39.90, date: '2026-02-10', pay: 'Cartão de Crédito', obs: '' },
-  { id: 4, desc: 'Farmácia', cat: 'Saúde', val: 85.00, date: '2026-02-15', pay: 'Cartão de Débito', obs: '' },
-  { id: 5, desc: 'Aluguel', cat: 'Moradia', val: 1200.0, date: '2026-02-01', pay: 'Pix', obs: '' },
-  { id: 6, desc: 'Restaurante', cat: 'Alimentação', val: 95.00, date: '2026-03-02', pay: 'Cartão de Crédito', obs: '' },
-  { id: 7, desc: 'Gasolina', cat: 'Transporte', val: 160.00, date: '2026-03-04', pay: 'Cartão de Débito', obs: '' },
-  { id: 8, desc: 'Aluguel', cat: 'Moradia', val: 1200.0, date: '2026-03-01', pay: 'Pix', obs: '' },
-  { id: 9, desc: 'Streaming', cat: 'Lazer', val: 55.90, date: '2026-03-10', pay: 'Cartão de Crédito', obs: '' },
-  { id: 10, desc: 'Academia', cat: 'Saúde', val: 99.00, date: '2026-03-05', pay: 'Cartão de Crédito', obs: '' },
-];
 
 // ── Estado ────────────────────────────────────────────────────────────────
 let expenses = [];
@@ -34,18 +21,26 @@ let barInstance = null;
 // ── Storage ───────────────────────────────────────────────────────────────
 async function carregarDespesas() {
   try {
-    expenses = await despesasAPI.listar();
+    const data = await despesasAPI.listar();
+
+    expenses = data.map(e => ({
+      id: e.id,
+      desc: e.descricao,
+      cat: e.categoria,
+      val: Number(e.valor),
+      date: e.data,
+      pay: e.pagamento,
+      obs: e.observacoes || ''
+    }));
+
     renderDashboard();
   } catch (error) {
-    alert('Erro ao carregar despesas: ' + error.message);
+    console.error(error);
+    alert('Erro ao carregar despesas do banco: ' + error.message);
   }
-}
+};
 
-carregarDespesas();
 
-function saveExpenses() {
-  localStorage.setItem('cc_expenses', JSON.stringify(expenses));
-}
 
 // ── Formatação ────────────────────────────────────────────────────────────
 function fmt(v) {
@@ -176,7 +171,7 @@ function filterTable(query) {
 }
 
 // ── Adicionar / Deletar ───────────────────────────────────────────────────
-function addExpense() {
+async function addExpense() {
   const desc = document.getElementById('descricao').value.trim();
   const val = parseFloat(document.getElementById('valor').value);
   const date = document.getElementById('data').value;
@@ -189,29 +184,40 @@ function addExpense() {
     return;
   }
 
-  await despesasAPI.criar({
-    descricao: desc,
-    categoria: cat,
-    valor: val,
-    data: date,
-    pagamento: pay,
-    observacoes: obs
-  });
+  try {
+    await despesasAPI.criar({
+      descricao: desc,
+      categoria: cat,
+      valor: val,
+      data: date,
+      pagamento: pay,
+      observacoes: obs
+    });
 
-  await carregarDespesas();
+    await carregarDespesas();
 
-  document.getElementById('descricao').value = '';
-  document.getElementById('valor').value = '';
-  document.getElementById('observacoes').value = '';
+    document.getElementById('descricao').value = '';
+    document.getElementById('valor').value = '';
+    document.getElementById('observacoes').value = '';
 
-  const toast = document.getElementById('toast');
-  toast.style.display = 'block';
-  setTimeout(() => (toast.style.display = 'none'), 2500);
+    const toast = document.getElementById('toast');
+    toast.style.display = 'block';
+    setTimeout(() => (toast.style.display = 'none'), 2500);
+
+  } catch (error) {
+    console.error(error);
+    alert('Erro ao salvar despesa: ' + error.message);
+  }
 }
 
-function deleteExpense(id) {
-  await despesasAPI.deletar(id);
-  await carregarDespesas();
+async function deleteExpense(id) {
+  try {
+    await despesasAPI.deletar(id);
+    await carregarDespesas();
+  } catch (error) {
+    console.error(error);
+    alert('Erro ao excluir despesa: ' + error.message);
+  }
 }
 
 // ── Gráficos ──────────────────────────────────────────────────────────────
@@ -376,6 +382,5 @@ window.handleExportCSV = handleExportCSV;
 window.handleExportPDF = handleExportPDF;
 
 // ── Init ──────────────────────────────────────────────────────────────────
-expenses = loadExpenses();
 document.getElementById('data').value = new Date().toISOString().split('T')[0];
-renderDashboard();
+carregarDespesas();

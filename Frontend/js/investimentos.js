@@ -11,30 +11,34 @@ const TIPOS = {
   'Outros':             { color: '#aaaaaa', cls: 'badge-inv-outros', emoji: '📦' },
 };
 
-// ── Seed ──────────────────────────────────────────────────────────────────
-const SEED = [
-  { id: 1, nome: 'PETR4',            tipo: 'Ações',               investido: 1500.00, atual: 1720.00, data: '2025-08-10', obs: 'Petrobras ON' },
-  { id: 2, nome: 'HGLG11',           tipo: 'Fundos Imobiliários', investido: 800.00,  atual: 760.00,  data: '2025-09-05', obs: 'FII Logístico' },
-  { id: 3, nome: 'Tesouro IPCA 2029',tipo: 'Tesouro Direto',      investido: 2000.00, atual: 2180.00, data: '2025-06-01', obs: '' },
-  { id: 4, nome: 'Bitcoin',          tipo: 'Criptomoedas',        investido: 500.00,  atual: 640.00,  data: '2025-11-20', obs: 'Binance' },
-  { id: 5, nome: 'CDB Banco Inter',  tipo: 'Renda Fixa',          investido: 3000.00, atual: 3120.00, data: '2025-07-15', obs: '110% CDI, venc. 2027' },
-];
 
 // ── Estado ────────────────────────────────────────────────────────────────
 let investimentos = [];
 let pieInstance   = null;
 
 // ── Storage ───────────────────────────────────────────────────────────────
-function loadInvestimentos() {
-  const stored = localStorage.getItem('cc_investimentos');
-  if (stored) return JSON.parse(stored);
-  localStorage.setItem('cc_investimentos', JSON.stringify(SEED));
-  return [...SEED];
+async function carregarInvestimentos() {
+  try {
+    const data = await investimentosAPI.listar();
+
+    investimentos = data.map(i => ({
+      id: i.id,
+      nome: i.nome,
+      tipo: i.tipo,
+      investido: Number(i.investido),
+      atual: Number(i.atual),
+      data: i.data,
+      obs: i.observacoes || ''
+    }));
+
+    renderAll();
+
+  } catch (error) {
+    console.error(error);
+    alert('Erro ao carregar investimentos: ' + error.message);
+  }
 }
 
-function saveInvestimentos() {
-  localStorage.setItem('cc_investimentos', JSON.stringify(investimentos));
-}
 
 window.fazerLogout = function() {
   const keysToRemove = [];
@@ -180,42 +184,66 @@ function filterInvestimentos(query) {
 }
 
 // ── Adicionar ─────────────────────────────────────────────────────────────
-function addInvestimento() {
-  const nome     = document.getElementById('inv-nome').value.trim();
-  const tipo     = document.getElementById('inv-tipo').value;
+async function addInvestimento() {
+  const nome = document.getElementById('inv-nome').value.trim();
+  const tipo = document.getElementById('inv-tipo').value;
   const investido = parseFloat(document.getElementById('inv-valor').value);
-  const data     = document.getElementById('inv-data').value;
-  const atual    = parseFloat(document.getElementById('inv-atual').value) || investido;
-  const obs      = document.getElementById('inv-obs').value.trim();
+  const data = document.getElementById('inv-data').value;
+  const atual = parseFloat(document.getElementById('inv-atual').value) || investido;
+  const obs = document.getElementById('inv-obs').value.trim();
 
   if (!nome || !tipo || !investido || !data) {
     alert('Preencha Nome, Tipo, Valor Investido e Data.');
     return;
   }
 
-  investimentos.push({ id: Date.now(), nome, tipo, investido, atual, data, obs });
-  saveInvestimentos();
+  try {
 
-  // Limpar campos
-  document.getElementById('inv-nome').value  = '';
-  document.getElementById('inv-tipo').value  = '';
-  document.getElementById('inv-valor').value = '';
-  document.getElementById('inv-atual').value = '';
-  document.getElementById('inv-obs').value   = '';
+    await investimentosAPI.criar({
+      nome,
+      tipo,
+      investido,
+      atual,
+      data,
+      observacoes: obs
+    });
 
-  // Toast
-  const toast = document.getElementById('inv-toast');
-  toast.style.display = 'block';
-  setTimeout(() => (toast.style.display = 'none'), 2500);
+    await carregarInvestimentos();
 
-  renderAll();
+    // Limpar campos
+    document.getElementById('inv-nome').value = '';
+    document.getElementById('inv-tipo').value = '';
+    document.getElementById('inv-valor').value = '';
+    document.getElementById('inv-atual').value = '';
+    document.getElementById('inv-obs').value = '';
+
+    // Toast
+    const toast = document.getElementById('inv-toast');
+    toast.style.display = 'block';
+
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 2500);
+
+  } catch (error) {
+    console.error(error);
+    alert('Erro ao salvar investimento: ' + error.message);
+  }
 }
 
 // ── Deletar ───────────────────────────────────────────────────────────────
-function deleteInvestimento(id) {
-  investimentos = investimentos.filter(i => i.id !== id);
-  saveInvestimentos();
-  renderAll();
+async function deleteInvestimento(id) {
+
+  try {
+
+    await investimentosAPI.deletar(id);
+
+    await carregarInvestimentos();
+
+  } catch (error) {
+    console.error(error);
+    alert('Erro ao excluir investimento: ' + error.message);
+  }
 }
 
 // ── Render geral ──────────────────────────────────────────────────────────
